@@ -39,16 +39,11 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(
-    fetch(event.request)
-      .then(function(response) {
-        return response;
-      })
-      .catch(function() {
-        return caches.match(event.request)
-          .then(function(response) {
-            return response || caches.match('/offline.html'); // 🔥 Pastikan offline.html dikembalikan
-          });
-      })
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request).catch(() => caches.match('/offline.html'));
+    })
   );
 });
+
+
 
